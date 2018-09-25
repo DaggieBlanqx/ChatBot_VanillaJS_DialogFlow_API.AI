@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>My Bot <!--this is just a title for this webpage , you can rename it as you want--></title>
+</head>
+<body>
+
+
+<script type="text/javascript">
+
+	/*
+
+	>How to use this bot : 
+	call the chatNow function , pass the message you want as the first parameter , the second parameter is your sessionId , this sessionID can be something random that you want , but the sessionId must be provided , 
+	*/
+
+	function chatNow(message,sessionId,debug) {
+
+		debug = debug || false; //if you want to see a response object on the console , set debug to true
+
+
+		//check if the message and sessionId variable supplied has contents or not
+
+		if (message.trim().length > 0 && sessionId.trim().length > 0 ) {
+
+			var accessToken = "<insert your accessToken here>";
+			var endPointURL = "https://api.api.ai/v1/query";
+			
+			fetch(endPointURL,{
+				method: 'POST',/*we are using method POST*/
+				credentials: 'include' ,/* since we are sending credentials via headers , we need to set credentials value as 'include' */
+				headers : new Headers({
+					 "Authorization":"Bearer " + accessToken,
+					 'Accept': 'application/json',
+					 'Content-Type': 'application/json'
+				}),
+				body:JSON.stringify({query: message, lang: "en", sessionId: sessionId })
+			})
+			.then((res) => res.json())
+			.then((data)=>{
+
+				//here is the actual response we need to show our bot users
+				let chatResponse = data.result.speech;
+				console.log(chatResponse);
+
+				if (debug) {
+					//see debug messages on the console
+					console.log(data);
+				}
+
+			})
+			.catch((err)=>console.error(err))
+
+		}else{
+			console.error('Provide both a message and a sessionId');
+		}
+	};
+
+</script>
+
+</body>
+</html>
